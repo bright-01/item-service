@@ -6,9 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -44,6 +42,53 @@ public class BasicItemController {
         model.addAttribute("item", item);
         return "basic/item";
     }
+
+    @GetMapping("/add")
+    public String addForm(){
+        return "basic/addForm";
+    }
+
+//    @PostMapping("/add")
+    public String addItemV1(@RequestParam String itemName, @RequestParam int price, @RequestParam Integer quantity, Model model) {
+        Item item = new Item();
+        item.setItemName(itemName);
+        item.setPrice(price);
+        item.setQuantity(quantity);
+
+        itemRepository.save(item);
+
+        model.addAttribute("item", item);
+
+        return "basic/item";
+    }
+
+//    @PostMapping("/add")
+    public String addItemV2(@ModelAttribute("item") Item item) {
+
+        // ModelAttribute
+        // 1. 요청 파라미터 - Item 객체를 생성하고, 요청 파라미터의 값을 프로퍼티 접근법 ( setXxx) 로 입력 해준다
+        // 2. Model 추가 - Model에 지정한 객체를 자동으로 넣어준다. 아래의 addAttribute
+
+        itemRepository.save(item);
+//        model.addAttribute("item", item); // 자동 추가, 생략가능
+
+        return "basic/item";
+    }
+
+//    @PostMapping("/add")
+    public String addItemV3(@ModelAttribute Item item) { // @ModelAttribute 의 값을 파라미터 객체의 첫글자를 소문자로 바꾼 값을 model에 담는다.
+        //        model.addAttribute("item", item); // 이렇게 담기고
+        //        model.addAttribute("helloData", item); // HelloData -> helloData 로 담기게 된다
+        itemRepository.save(item);
+        return "basic/item";
+    }
+
+    @PostMapping("/add")
+    public String addItemV4(Item item) { // @ModelAttribute 생략이 가능.. model attribute 에담기는 값은 위랑 동일한 규칙이 적용
+        itemRepository.save(item);
+        return "basic/item";
+    }
+
 
 
 
